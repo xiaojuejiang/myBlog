@@ -2,9 +2,9 @@ const express=require('express')
 
 const router=express.Router()
 
+const control=require('../controller/index.js')
 
-router.get('/',(req,res)=>{
-    res.render('index.ejs',{})
-})
+
+router.get('/',control.handleGetIndex)
 
 module.exports=router

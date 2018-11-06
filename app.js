@@ -1,14 +1,33 @@
 const express=require('express')
+const path=require('path')
+const fs=require('fs')
+const session=require('express-session')
 
 const app=express()
 
-const indexRouter=require('./router/index.js')
-const userRouter=require('./router/user.js')
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+  }))
+//自动获取路由
+fs.readdir('./router',(err,result)=>{
+    result.forEach(item=>{
+
+        const router=require(path.join(__dirname,'/router',item))
+    
+        app.use(router)
+    })
+})
 
 
-app.use(indexRouter)
+// const indexRouter=require('./router/index.js')
+// const userRouter=require('./router/user.js')
 
-app.use(userRouter)
+
+// app.use(indexRouter)
+
+// app.use(userRouter)
 
 app.use(express.static('./views'))
 
