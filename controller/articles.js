@@ -54,13 +54,6 @@ module.exports = {
             })
             console.log(result)
         })
-
-
-
-
-
-
-
         res.render('../views/articles/info.ejs', {
             user: req.session.user,
             isLogin: req.session.isLogin
