@@ -10,6 +10,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
   }))
+  
 //自动获取路由
 fs.readdir('./router',(err,result)=>{
     result.forEach(item=>{
@@ -19,15 +20,6 @@ fs.readdir('./router',(err,result)=>{
         app.use(router)
     })
 })
-
-
-// const indexRouter=require('./router/index.js')
-// const userRouter=require('./router/user.js')
-
-
-// app.use(indexRouter)
-
-// app.use(userRouter)
 
 app.use(express.static('./views'))
 

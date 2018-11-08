@@ -2,6 +2,9 @@ const conn = require('../db/db')
 
 const moment = require('moment')
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 module.exports = {
     //渲染登录页面
     handleGetLogin(req, res) {
@@ -18,8 +21,8 @@ module.exports = {
             status: 400,
             msg: '请填写用户名和密码'
         })
-        const sqlStr = 'select * from user where username=? and password=?'
-        conn.query(sqlStr, [body.username, body.password], (err, result) => {
+        const sqlStr = 'select * from user where username=?'
+        conn.query(sqlStr, [body.username], (err, result) => {
             if (err) return res.status(500).send({
                 status: 500,
                 msg: err.message
@@ -29,14 +32,19 @@ module.exports = {
                 status: 400,
                 msg: '用户名或密码错误'
             })
-
-            req.session.user = result[0]
-            req.session.isLogin = true
-            let hour = 1000 * 60 * 60 * 24 * 30
-            req.session.cookie.expires = new Date(Date.now() + hour)
-            res.send({
-                status: 200,
-                msg: '登录成功'
+            bcrypt.compare(body.password, result[0].password, (err, compareResult) => {
+                if (!compareResult) res.status(400).send({
+                    status: 400,
+                    msg: '用户名或密码错误'
+                })
+                req.session.user = result[0]
+                req.session.isLogin = true
+                let hour = 1000 * 60 * 60 * 24 * 30
+                req.session.cookie.expires = new Date(Date.now() + hour)
+                res.send({
+                    status: 200,
+                    msg: '登录成功'
+                })
             })
         })
     },
@@ -59,33 +67,41 @@ module.exports = {
                 status: 400,
                 msg: '用户名已存在'
             })
-            const sqlStr1 = 'insert into user set ?'
-            req.body.ctime = moment().format('YYYY-MM-DD hh:mm:ss')
-            conn.query(sqlStr1, body, (err, result) => {
+            bcrypt.hash(body.password, saltRounds, (err, hash) => {
                 if (err) return res.status(500).send({
                     status: 500,
-                    msg: '数据库添加失败'
+                    msg: '加密失败' + err
                 })
-                if (result.affectedRows != 1) return res.status(500), send({
-                    status: 500,
-                    msg: '添加失败'
-                })
-                res.send({
-                    status: 200,
-                    msg: '注册成功'
+                body.password = hash
+                const sqlStr1 = 'insert into user set ?'
+                body.ctime = moment().format('YYYY-MM-DD hh:mm:ss')
+                conn.query(sqlStr1, body, (err, result) => {
+                    if (err) return res.status(500).send({
+                        status: 500,
+                        msg: '数据库添加失败'
+                    })
+                    if (result.affectedRows != 1) return res.status(500), send({
+                        status: 500,
+                        msg: '添加失败'
+                    })
+                    res.send({
+                        status: 200,
+                        msg: '注册成功'
+                    })
                 })
             })
+
         })
     },
     //注销
-    handleGetLogout(req,res){
-        req.session.destroy(err=>{
-            if(err)return res.send({
-                status:500,
-                msg:"退出失败,请重试"
+    handleGetLogout(req, res) {
+        req.session.destroy(err => {
+            if (err) return res.send({
+                status: 500,
+                msg: "退出失败,请重试"
             })
             res.redirect('/')
         })
-        
+
     }
 }
