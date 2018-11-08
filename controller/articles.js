@@ -1,5 +1,7 @@
 const conn = require('../db/db')
 
+const marked = require('marked')
+
 const moment = require('moment')
 
 module.exports = {
@@ -52,12 +54,51 @@ module.exports = {
                 status: 400,
                 msg: '你查询的文章不存在'
             })
-            console.log(result)
+
+            result[0].content = marked(result[0].content)
+            // console.log(result[0].content)
+            res.render('../views/articles/info.ejs', {
+                user: req.session.user,
+                isLogin: req.session.isLogin,
+                article: result[0],
+            })
         })
-        res.render('../views/articles/info.ejs', {
-            user: req.session.user,
-            isLogin: req.session.isLogin
+
+    },
+    handleGetEdit(req, res) {
+        if (!req.session.isLogin) return res.redirect('/')
+        const id = req.params.id
+        const sqlStr = 'select * from articles where id = ?'
+        conn.query(sqlStr, id, (err, result) => {
+            if (err || result.length !== 1) return res.send({
+                status: 500,
+                msg: err.message
+            })
+            // console.log(result)
+            res.render('../views/articles/edit.ejs', {
+                user: req.session.user,
+                isLogin: req.session.isLogin,
+                article: result[0]
+            })
         })
-    }
+    },
+    handlePostEdit(req, res) {
+        const body = req.body
+        const id = body.id
+        const sqlStr = 'update articles set ? where id = ?'
+        body.ctime = moment().format('YYYY-MM-DD HH:mm:ss')
+        conn.query(sqlStr, [body, id], (err, result) => {
+            if (err || result.affectedRows !== 1) return res.status(500).send({
+                status: 500,
+                msg: err.message
+            })
+            res.send({
+                status: 200,
+                msg: 'ok',
+                article_id: body.id
+            })
+        })
+    },
+
 
 }

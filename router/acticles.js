@@ -15,4 +15,9 @@ router.post('/articles/add',control.handlePostAddArticles)
 
 router.get('/articles/info/:id',control.handleGetInfo)
 
+router.get('/articles/edit/:id',control.handleGetEdit)
+
+router.post('/articles/edit',control.handlePostEdit)
+
+
 module.exports=router
