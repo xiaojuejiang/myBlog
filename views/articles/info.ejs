@@ -2,7 +2,7 @@
 <div class="container">
   <h1 class="text-center">
     <%= article.title%> 
-    <%if(article.author_id==user.id){%>
+    <%if(isLogin && article.author_id==user.id){%>
         <a class="btn btn-success pull-right" href="/articles/edit/<%= article.id%>">编辑</a>
     <%}%>
     <hr />
