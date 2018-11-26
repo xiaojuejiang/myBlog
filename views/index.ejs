@@ -40,18 +40,18 @@
             <%}%>
 
             <%if(page==total){%>
-                <li class="disabled">
-                    <span aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </span>
-                </li>
-                <%}else{%>
-                <li>
-                    <a href="?page=<%= (page+1)>total?total:(page+1)%>" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-                <%}%>
+            <li class="disabled">
+                <span aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </span>
+            </li>
+            <%}else{%>
+            <li>
+                <a href="?page=<%= (page+1)>total?total:(page+1)%>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <%}%>
         </ul>
     </nav>
 </div>

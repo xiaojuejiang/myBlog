@@ -20,7 +20,7 @@ module.exports = {
             if(!result)result=[[]]
             // console.log(result)
             let total=Math.ceil(result[1][0].count/pageSize)
-            console.log(total)
+            // console.log(total)
             res.render('index.ejs', {
                 user: req.session.user,
                 isLogin: req.session.isLogin,

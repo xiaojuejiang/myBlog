@@ -14,7 +14,7 @@ module.exports = {
     },
     handlePostAddArticles(req, res) {
         const body = req.body
-        console.log(body)
+        // console.log(body)
         if (body.title.trim().length == 0 ||
             body.content.trim().length == 0) return res.status(400).send({
             status: 400,
@@ -43,7 +43,7 @@ module.exports = {
         })
     },
     handleGetInfo(req, res) {
-        if (!req.session.isLogin) return res.redirect('/')
+        // if (!req.session.isLogin) return res.redirect('/')
 
         const id = req.params.id
 
